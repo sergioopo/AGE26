@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { callData, getHistoricalAnalysis } from "../analysis/scenarioEngine.js";
 import KpiCard from "./components/cards/KpiCard";
 import ExecutiveCard from "./components/cards/ExecutiveCard";
@@ -8,9 +9,9 @@ import P2DistributionPieChart from "./components/charts/P2DistributionPieChart";
 
 const number = (value, decimals = 2) => new Intl.NumberFormat("es-ES", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(value);
 
-const p2CutoffGroups = (analysis) => {
-  if (!analysis) return [];
-  const countFor = (predicate) => analysis.p2Breakdown.reduce((sum, { score, count }) => sum + (predicate(score) ? count : 0), 0);
+const p2CutoffGroups = (breakdown = [], totalScores = 0) => {
+  if (!totalScores) return [];
+  const countFor = (predicate) => breakdown.reduce((sum, { score, count }) => sum + (predicate(score) ? count : 0), 0);
   const oneThirdScores = Array.from({ length: 11 }, (_, index) => (37 + index) / 3);
   const groups = [
     { label: "≤ 12,00", count: countFor((score) => score <= 12) },
@@ -20,7 +21,7 @@ const p2CutoffGroups = (analysis) => {
     })),
     { label: "≥ 16,00", count: countFor((score) => score >= 16) },
   ];
-  return groups.map((group) => ({ ...group, percentage: (group.count / analysis.totalScores) * 100 }));
+  return groups.map((group) => ({ ...group, percentage: (group.count / totalScores) * 100 }));
 };
 
 const dashboardP2Distribution = (analysis) => {
@@ -37,6 +38,7 @@ const dashboardP2Distribution = (analysis) => {
 };
 
 export function DashboardView({ analysis }) {
+  const placeCoverage = analysis ? (analysis.qualified / callData[2025].places) * 100 : null;
   return <>
     <div className="kpi-grid">
       <KpiCard title="Notas registradas" value={analysis ? number(analysis.totalScores, 0) : "—"} subtitle={analysis ? "Registros válidos importados" : "Carga un Excel para comenzar"}/>
@@ -60,10 +62,10 @@ export function DashboardView({ analysis }) {
         </section>
       </div>
       <div>
-        <ExecutiveCard title="Resumen ejecutivo"><div className="executive-summary">{analysis ? <>Se han analizado {number(analysis.totalScores, 0)} registros válidos. {number(analysis.qualified, 0)} superan el cribado de P1 ≥ 35 y P2 ≥ 15.<br/><br/>La convocatoria reduce las plazas a 2.282 y la regla de corrección fija P1 en 35,00. El escenario central de P2 se mantiene entre 15,33 y 15,66.<br/><br/>La media total transformada de la muestra es {number(analysis.averageTotal)}.</> : "Carga un Excel con las notas brutas y transformadas para generar el análisis estadístico."}</div><br/>{analysis?.representativity && <ProbabilityBadge probability={Math.round(analysis.representativity)} label="Cobertura"/>}</ExecutiveCard>
+        <ExecutiveCard title="Resumen ejecutivo"><div className="executive-summary">{analysis ? <>Se han analizado {number(analysis.totalScores, 0)} registros válidos. {number(analysis.qualified, 0)} superan el cribado de P1 ≥ 35 y P2 ≥ 15.<br/><br/>La convocatoria reduce las plazas a 2.282 y la regla de corrección fija P1 en 35,00. El escenario central de P2 se mantiene entre 15,33 y 15,66.<br/><br/>La media total transformada de la muestra es {number(analysis.averageTotal)}.</> : "Carga un Excel con las notas brutas y transformadas para generar el análisis estadístico."}</div><br/>{placeCoverage !== null && <ProbabilityBadge probability={Math.round(placeCoverage)} label="Cobertura de plazas"/>}</ExecutiveCard>
         <br/>
         <ExecutiveCard title="Estado del modelo"><div className="score-box">
-          <Metric label="Representatividad" value={analysis?.representativity ? `${number(analysis.representativity, 0)} %` : "—"}/>
+          <Metric label="Cobertura de plazas" value={placeCoverage !== null ? `${number(placeCoverage, 0)} %` : "—"}/>
           <Metric label="Filas válidas" value={analysis ? `${number((analysis.validRows / analysis.importedRows) * 100, 0)} %` : "—"}/>
           <Metric label="Corte P1 previsto" value="35,00"/><Metric label="Corte P2 central" value="15,33 – 15,66"/>
         </div></ExecutiveCard>
@@ -87,10 +89,19 @@ export function HistoricalView({ analysis }) {
 }
 
 export function SimulatorView({ analysis }) {
+  const [p1Filter, setP1Filter] = useState("all");
+  const filteredCandidates = analysis?.p2Candidates?.filter(({ rawP1 }) => p1Filter === "all" || rawP1 >= 35) || [];
+  const filteredP2 = filteredCandidates.map(({ rawP2 }) => rawP2);
+  const filteredBreakdown = [...new Set(filteredP2.map((value) => Math.round(value * 3) / 3))].sort((a, b) => b - a).map((score) => ({ score, count: filteredP2.filter((value) => Math.round(value * 3) / 3 === score).length }));
+  const filteredAverage = filteredP2.length ? filteredP2.reduce((sum, value) => sum + value, 0) / filteredP2.length : null;
+  const sortedP2 = [...filteredP2].sort((a, b) => a - b);
+  const filteredMedian = sortedP2.length ? (sortedP2[(sortedP2.length - 1) >> 1] + sortedP2[sortedP2.length >> 1]) / 2 : null;
+  const filterSubtitle = p1Filter === "p1Passed" ? "Solo P1 ≥ 35" : "Todas las notas";
   return <section className="analysis-page"><h2>Simulador</h2><p className="page-intro">Cortes de referencia y distribución exacta de P2. Las notas se agrupan en intervalos de un tercio (0,33).</p>
-    <div className="simulator-kpis"><KpiCard title="Corte P1 previsto" value="35,00" subtitle="Mínimo de corrección CPS"/><KpiCard title="P2 media" value={analysis ? number(analysis.averageRawP2) : "—"} subtitle="Nota bruta"/><KpiCard title="P2 mediana" value={analysis ? number(analysis.p2Median) : "—"} subtitle="Nota bruta"/><KpiCard title="P1 mediana" value={analysis ? number(analysis.p1Median) : "—"} subtitle={`${analysis ? number(analysis.p1AtMinimum, 0) : "—"} con P1 ≥ 35`}/></div>
-    <ChartCard title="Distribución circular de P2" subtitle="Agrupación en los umbrales competitivos de P2; la leyenda muestra recuento y porcentaje."><P2DistributionPieChart data={p2CutoffGroups(analysis)}/></ChartCard>
-    <div className="table-card"><table><thead><tr><th>Nota P2</th><th>Recuento</th><th>% de muestra</th></tr></thead><tbody>{analysis ? analysis.p2Breakdown.map(({ score, count }) => <tr key={score}><td>{number(score)}</td><td>{number(count, 0)}</td><td>{number((count / analysis.totalScores) * 100, 1)}%</td></tr>) : <tr><td colSpan="3">Carga un Excel para ver el recuento.</td></tr>}</tbody></table></div>
+    <div className="simulator-filter"><div><strong>Filtro para P2</strong><span>{analysis ? `${number(filteredCandidates.length, 0)} registros incluidos` : "Carga un Excel para aplicar el filtro"}</span></div><label htmlFor="p1-filter">Condición P1<select id="p1-filter" value={p1Filter} onChange={(event) => setP1Filter(event.target.value)} disabled={!analysis}><option value="all">Sin filtro de P1</option><option value="p1Passed">Solo P1 ≥ 35</option></select></label></div>
+    <div className="simulator-kpis"><KpiCard title="Corte P1 previsto" value="35,00" subtitle="Mínimo de corrección CPS"/><KpiCard title="P2 media" value={filteredAverage === null ? "—" : number(filteredAverage)} subtitle={filterSubtitle}/><KpiCard title="P2 mediana" value={filteredMedian === null ? "—" : number(filteredMedian)} subtitle={filterSubtitle}/><KpiCard title="P1 mediana" value={analysis ? number(analysis.p1Median) : "—"} subtitle={`${analysis ? number(analysis.p1AtMinimum, 0) : "—"} con P1 ≥ 35`}/></div>
+    <ChartCard title="Distribución circular de P2" subtitle={`Agrupación en los umbrales competitivos de P2 · ${filterSubtitle.toLowerCase()}`}><P2DistributionPieChart data={p2CutoffGroups(filteredBreakdown, filteredCandidates.length)}/></ChartCard>
+    <div className="table-card"><table><thead><tr><th>Nota P2</th><th>Recuento</th><th>% de muestra</th></tr></thead><tbody>{analysis ? filteredBreakdown.map(({ score, count }) => <tr key={score}><td>{number(score)}</td><td>{number(count, 0)}</td><td>{number((count / filteredCandidates.length) * 100, 1)}%</td></tr>) : <tr><td colSpan="3">Carga un Excel para ver el recuento.</td></tr>}</tbody></table></div>
   </section>;
 }
 

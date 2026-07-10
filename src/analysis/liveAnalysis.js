@@ -102,6 +102,7 @@ export function analyseWorkbookRows(rows) {
     representativity,
     scenarios: calculateCutoffScenarios(qualifiedP2Values),
     p2Breakdown,
+    p2Candidates: candidates.map(({ rawP1, rawP2 }) => ({ rawP1, rawP2 })),
     candidates: candidates.map(({ rawP1, rawP2, transformedP1, transformedP2, total, drd, province }) => ({
       drd, province, rawP1, rawP2, total: total ?? transformedP1 + transformedP2,
     })).filter(({ drd }) => drd),
