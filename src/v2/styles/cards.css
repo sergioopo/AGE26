@@ -1,0 +1,219 @@
+/* ==========================================================
+   CARDS
+========================================================== */
+
+.card{
+
+    background:var(--surface);
+
+    border-radius:var(--radius-lg);
+
+    padding:28px;
+
+    border:1px solid var(--border);
+
+    box-shadow:var(--shadow-sm);
+
+    display:flex;
+
+    flex-direction:column;
+
+    transition:.25s;
+
+}
+
+.card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:var(--shadow-lg);
+
+}
+
+.card-title{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:var(--text-soft);
+
+    margin-bottom:14px;
+
+}
+
+.card-value{
+
+    font-size:42px;
+
+    font-weight:800;
+
+    color:var(--text);
+
+    line-height:1;
+
+}
+
+.card-subtitle{
+
+    margin-top:14px;
+
+    color:var(--text-soft);
+
+    font-size:14px;
+
+}
+
+/* ==========================================================
+   KPI GRID
+========================================================== */
+
+.kpi-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:24px;
+
+    margin-bottom:36px;
+
+}
+
+@media(max-width:1300px){
+
+.kpi-grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:700px){
+
+.kpi-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+/* ==========================================================
+   EXECUTIVE GRID
+========================================================== */
+
+.dashboard-grid{
+
+    display:grid;
+
+    grid-template-columns:2fr 1fr;
+
+    gap:28px;
+
+    margin-top:30px;
+
+}
+
+@media(max-width:1100px){
+
+.dashboard-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+/* ==========================================================
+   EXECUTIVE SUMMARY
+========================================================== */
+
+.executive-summary{
+
+    font-size:17px;
+
+    line-height:1.9;
+
+}
+
+/* ==========================================================
+   SCORE BOX
+========================================================== */
+
+.score-box{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.score-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.score-label{
+
+    color:var(--text-soft);
+
+}
+
+.score-value{
+
+    font-weight:700;
+
+}
+
+/* ==========================================================
+   BADGE
+========================================================== */
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.badge-high{
+
+    background:var(--success);
+
+}
+
+.badge-medium{
+
+    background:var(--warning);
+
+}
+
+.badge-low{
+
+    background:var(--danger);
+
+}

@@ -1,0 +1,257 @@
+/* ==========================================================
+   LAYOUT
+========================================================== */
+
+.app-shell{
+
+    display:flex;
+
+    min-height:100vh;
+
+    background:var(--background);
+
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar{
+
+    width:var(--sidebar-width);
+
+    background:#0F172A;
+
+    color:white;
+
+    display:flex;
+
+    flex-direction:column;
+
+    padding:32px 24px;
+
+    position:fixed;
+
+    left:0;
+    top:0;
+    bottom:0;
+
+    box-shadow:var(--shadow-md);
+
+    z-index:100;
+
+}
+
+.sidebar-logo{
+
+    font-size:30px;
+
+    font-weight:800;
+
+    margin-bottom:6px;
+
+}
+
+.sidebar-subtitle{
+
+    font-size:14px;
+
+    opacity:.75;
+
+    margin-bottom:48px;
+
+}
+
+/* ==========================================================
+   MENU
+========================================================== */
+
+.sidebar-nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.sidebar-link{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 18px;
+
+    border-radius:14px;
+
+    color:#CBD5E1;
+
+    font-weight:500;
+
+}
+
+.sidebar-link:hover{
+
+    background:rgba(255,255,255,.08);
+
+    color:white;
+
+}
+
+.sidebar-link.active{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.main-content{
+
+    margin-left:var(--sidebar-width);
+
+    width:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.topbar{
+
+    height:var(--header-height);
+
+    background:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 40px;
+
+    border-bottom:1px solid var(--border);
+
+    position:sticky;
+
+    top:0;
+
+    z-index:20;
+
+}
+
+.topbar-title{
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+.topbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+/* ==========================================================
+   PAGE
+========================================================== */
+
+.page{
+
+    padding:40px;
+
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.grid{
+
+    display:grid;
+
+    gap:24px;
+
+}
+
+.grid-2{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.grid-3{
+
+    grid-template-columns:repeat(3,1fr);
+
+}
+
+.grid-4{
+
+    grid-template-columns:repeat(4,1fr);
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:1200px){
+
+.grid-4{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:900px){
+
+.sidebar{
+
+transform:translateX(-100%);
+
+}
+
+.main-content{
+
+margin-left:0;
+
+}
+
+.grid-2,
+.grid-3,
+.grid-4{
+
+grid-template-columns:1fr;
+
+}
+
+.page{
+
+padding:24px;
+
+}
+
+}
