@@ -108,3 +108,13 @@ export function analyseWorkbookRows(rows) {
     })).filter(({ drd }) => drd),
   };
 }
+
+export function analyseSimulatorParticipants(participants) {
+  const transform = (score, cutoff, maximum) => score < cutoff
+    ? (25 * score) / cutoff
+    : 25 * (1 + (score - cutoff) / (maximum - cutoff));
+  const rows = [["Nota Bruta P1", "Nota Trans. P1", "Nota Bruta P2", "Nota Trans. P2", "Código", "Provincia"], ...participants.map((participant) => [
+    participant.rawP1, transform(participant.rawP1, 35, 70), participant.rawP2, transform(participant.rawP2, 15, 20), participant.drd, participant.province,
+  ])];
+  return analyseWorkbookRows(rows);
+}

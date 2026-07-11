@@ -1,17 +1,27 @@
-# React + Vite
+# AGE 2025 · Informe del simulador
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación Vite preparada para Vercel. El ranking se almacena en PostgreSQL remoto mediante Neon; no se usa SQLite ni un proceso Node persistente.
 
-Currently, two official plugins are available:
+## Configuración en Vercel
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Crea una base Neon/PostgreSQL, por ejemplo desde el Marketplace de Vercel.
+2. En **Settings → Environment Variables**, añade:
 
-## React Compiler
+   ```text
+   DATABASE_URL=postgresql://...
+   CRON_SECRET=un-secreto-largo-y-aleatorio
+   ```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Haz el deploy. Las tablas se crean automáticamente en la primera llamada API.
 
-## Expanding the ESLint configuration
+El botón **Actualizar ranking** ejecuta una sincronización manual. En Vercel Hobby, `vercel.json` programa además una sincronización diaria a las 06:00 UTC; en Pro puede ampliarse a cada seis horas. La ruta específica de Cron usa `CRON_SECRET` para aceptar exclusivamente a Vercel.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-# AGE26
+El extractor entra como invitado con P1/P2 y fallos a `0`. La plataforma entrega todos los participantes en un bloque de datos: el paginado de 500 es visual y no limita la extracción. Cada ejecución se compara por DRD contra la anterior y **Notas nuevas** muestra los incorporados.
+
+## Desarrollo local
+
+Para probar también las funciones API, configura las mismas variables en `.env.local` y ejecuta:
+
+```bash
+npx vercel dev
+```

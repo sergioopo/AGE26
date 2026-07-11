@@ -4,13 +4,15 @@ title,
 
 subtitle,
 
-children
+children,
+
+className = ""
 
 }){
 
 return(
 
-<section className="chart-card">
+<section className={`chart-card ${className}`}>
 
 <div className="chart-title">
 

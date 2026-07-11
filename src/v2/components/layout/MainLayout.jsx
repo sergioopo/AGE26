@@ -2,6 +2,7 @@ const navItems = [
     ["dashboard", "Dashboard"],
     ["historical", "Histórico"],
     ["simulator", "Distribución"],
+    ["analysis", "Análisis"],
     ["newScores", "Notas nuevas"],
 ];
 
@@ -14,15 +15,7 @@ export default function MainLayout({ children, activePage, onNavigate, isDark, o
             <aside className="sidebar">
 
                 <div className="sidebar-logo">
-
-                    AGE
-
-                </div>
-
-                <div className="sidebar-subtitle">
-
-                    Statistical Intelligence
-
+                    <img src="/castelukii.jpg" alt="Castelukii" />
                 </div>
 
                 <nav className="sidebar-nav">
