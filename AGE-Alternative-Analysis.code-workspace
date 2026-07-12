@@ -1,0 +1,35 @@
+{
+  "folders": [
+    {
+      "name": "AGE · Análisis alternativo",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "window.title": "AGE · Análisis alternativo — ${activeEditorShort}",
+    "terminal.integrated.cwd": "${workspaceFolder}",
+    "git.openRepositoryInParentFolders": "never"
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Alternativo: desarrollo local",
+        "type": "npm",
+        "script": "dev",
+        "group": "build",
+        "problemMatcher": []
+      },
+      {
+        "label": "Alternativo: compilar",
+        "type": "npm",
+        "script": "build",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+}
