@@ -24,3 +24,5 @@ data/*.sqlite*
 *.sln
 *.sw?
 .vercel
+# Vercel and local environment credentials must never be committed.
+.env*
