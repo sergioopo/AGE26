@@ -1,8 +1,7 @@
 const navItems = [
     ["dashboard", "Dashboard"],
+    ["simulator", "Muestra simulador"],
     ["historical", "Histórico"],
-    ["simulator", "Distribución"],
-    ["analysis", "Análisis"],
     ["newScores", "Notas nuevas"],
 ];
 

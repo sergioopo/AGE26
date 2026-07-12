@@ -1,12 +1,12 @@
 export const callData = {
-  2019: { places: 850, correctedP1: null, p1Cutoff: null, p2Cutoff: 15.66 },
-  2022: { places: 4333, correctedP1: 12999, p1Cutoff: 31.33, p2Cutoff: 14.33 },
+  2019: { places: 787, attended: 18481, correctedP1: 1968, p1Cutoff: 46.33, p2Cutoff: 15.67 },
+  2022: { places: 4333, attended: 35765, correctedP1: 12999, p1Cutoff: 31.33, p2Cutoff: 14.33 },
   2024: { places: 5080, correctedP1: 15240, p1Cutoff: 33.70, p2Cutoff: 14.00, registered: 70708, attended: 36671 },
   2025: { places: 2282, correctedP1: 6846, p1Cutoff: 35, registered: 57884, attended: 32188, socialSecurityOverlap: 15800 },
 };
 
 export const historicalP2References = [
-  { year: 2019, cutoff: 15.66 },
+  { year: 2019, cutoff: 15.67 },
   { year: 2022, cutoff: 14.33 },
   { year: 2024, cutoff: 14.00 },
 ];
@@ -105,6 +105,6 @@ export function getHistoricalAnalysis() {
     p1Rule: "Con 6.846 supuestos corregidos previstos (3 × 2.282 plazas), P1 se mantiene en 35,00.",
     attendanceChange: ((current.attended - previous.attended) / previous.attended) * 100,
     placesChange: ((current.places - previous.places) / previous.places) * 100,
-    extrapolation: "Las referencias P2 históricas son 15,66 (2019), 14,33 (2022) y 14,00 (2024). La reducción de plazas eleva la presión competitiva, mientras que la dificultad percibida de P1 y la coincidencia con Seguridad Social moderan ese efecto; el motor de escenarios actualiza el intervalo central con las muestras disponibles.",
+    extrapolation: "Las referencias P2 históricas son 15,67 (2019), 14,33 (2022) y 14,00 (2024). La reducción de plazas eleva la presión competitiva, mientras que la dificultad percibida de P1 y la coincidencia con Seguridad Social moderan ese efecto; el motor de escenarios actualiza el intervalo central con las muestras disponibles.",
   };
 }

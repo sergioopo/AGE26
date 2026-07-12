@@ -15,6 +15,7 @@ const headerAliases = {
   status: ["estado"],
   drd: ["codigo", "drd", "identificador"],
   province: ["provincia"],
+  groupName: ["turno", "grupo", "groupname"],
 };
 
 const asNumber = (value) => {
@@ -65,6 +66,7 @@ export function analyseWorkbookRows(rows) {
     status: columns.status === -1 ? "" : String(row[columns.status] ?? ""),
     drd: columns.drd === -1 ? "" : String(row[columns.drd] ?? "").trim(),
     province: columns.province === -1 ? "" : String(row[columns.province] ?? "").trim(),
+    groupName: columns.groupName === -1 ? "general" : String(row[columns.groupName] ?? "general").trim().toLowerCase(),
   })).filter((candidate) => Object.values(candidate).slice(0, 4).every((value) => value !== null));
 
   if (!candidates.length) throw new Error("No se han encontrado notas numéricas válidas.");
@@ -102,9 +104,9 @@ export function analyseWorkbookRows(rows) {
     representativity,
     scenarios: calculateCutoffScenarios(qualifiedP2Values),
     p2Breakdown,
-    p2Candidates: candidates.map(({ rawP1, rawP2 }) => ({ rawP1, rawP2 })),
-    candidates: candidates.map(({ rawP1, rawP2, transformedP1, transformedP2, total, drd, province }) => ({
-      drd, province, rawP1, rawP2, total: total ?? transformedP1 + transformedP2,
+    p2Candidates: candidates.map(({ rawP1, rawP2, groupName }) => ({ rawP1, rawP2, groupName })),
+    candidates: candidates.map(({ rawP1, rawP2, transformedP1, transformedP2, total, drd, province, groupName }) => ({
+      drd, province, groupName, rawP1, rawP2, total: total ?? transformedP1 + transformedP2,
     })).filter(({ drd }) => drd),
   };
 }
@@ -113,8 +115,8 @@ export function analyseSimulatorParticipants(participants) {
   const transform = (score, cutoff, maximum) => score < cutoff
     ? (25 * score) / cutoff
     : 25 * (1 + (score - cutoff) / (maximum - cutoff));
-  const rows = [["Nota Bruta P1", "Nota Trans. P1", "Nota Bruta P2", "Nota Trans. P2", "Código", "Provincia"], ...participants.map((participant) => [
-    participant.rawP1, transform(participant.rawP1, 35, 70), participant.rawP2, transform(participant.rawP2, 15, 20), participant.drd, participant.province,
+  const rows = [["Nota Bruta P1", "Nota Trans. P1", "Nota Bruta P2", "Nota Trans. P2", "Código", "Provincia", "Grupo"], ...participants.map((participant) => [
+    participant.rawP1, transform(participant.rawP1, 35, 70), participant.rawP2, transform(participant.rawP2, 15, 20), participant.drd, participant.province, participant.groupName,
   ])];
   return analyseWorkbookRows(rows);
 }

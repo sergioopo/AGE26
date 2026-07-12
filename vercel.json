@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/v2", "destination": "/index.html" }
+  ],
   "crons": [
     { "path": "/api/simulator/cron", "schedule": "0 6 * * *" }
   ]

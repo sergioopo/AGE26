@@ -2,7 +2,7 @@ import "./main.css";
 import { useCallback, useEffect, useState } from "react";
 import { analyseSimulatorParticipants } from "../analysis/liveAnalysis.js";
 import MainLayout from "./components/layout/MainLayout";
-import { AnalysisView, DashboardView, HistoricalView, NewScoresView, SimulatorView } from "./views";
+import { DashboardView, HistoricalView, NewScoresView, SimulatorView } from "./views";
 
 const THEME_KEY = "age-theme-v1";
 
@@ -29,7 +29,8 @@ export default function AppV2() {
       api("/api/simulator/status"), api("/api/simulator/participants"), api("/api/simulator/new-scores"),
     ]);
     setSync(status.sync);
-    setAnalysis(participants.participants.length ? analyseSimulatorParticipants(participants.participants) : null);
+    const generalParticipants = participants.participants.filter(({ groupName }) => groupName === "general");
+    setAnalysis(generalParticipants.length ? analyseSimulatorParticipants(generalParticipants) : null);
     setNewScores(scores.scores);
     setRecentScores(scores.recentScores || []);
     setPreviousVersion(scores.previousSync);
@@ -50,13 +51,13 @@ export default function AppV2() {
     return nextTheme;
   });
 
-  const titles = { dashboard: "Dashboard del Simulador de cortes", historical: "Histórico", simulator: "Distribución de la muestra del simulador", analysis: "Análisis", newScores: "Notas nuevas" };
+  const titles = { dashboard: "Escenarios de corte", historical: "Histórico", simulator: "Muestra del simulador", newScores: "Notas nuevas" };
   return <div className={`app-v2 ${isDark ? "theme-dark" : ""}`}><MainLayout activePage={page} onNavigate={setPage} isDark={isDark} onToggleTheme={toggleTheme}>
     <h1>{titles[page]}</h1>
     <div className="upload-row"><p className="dashboard-description" style={{ marginTop: 12, marginBottom: 0 }}>Esta herramienta tiene como objetivo permitir una visualización y análisis de los datos del Simulador de <a href="https://plataformafuncionarios.es" target="_blank" rel="noreferrer">plataformafuncionarios.es</a>. No es una herramienta oficial ni representa los cortes finales de la convocatoria AGE C1 2025.</p><div className="upload-actions"><button className="upload-button" type="button" onClick={synchronize} disabled={isSyncing}>{isSyncing ? "Actualizando…" : "Actualizar ranking"}</button></div></div>
-    {sync && <div className="import-status"><span>Base de datos sincronizada: <strong>{new Date(sync.completed_at).toLocaleString("es-ES")}</strong> · {sync.participant_count} participantes · {sync.new_count} nuevos</span></div>}
+    {sync && <div className="import-status"><span>Base de datos sincronizada: <strong>{new Date(sync.completed_at).toLocaleString("es-ES")}</strong> · análisis limitado al turno general</span></div>}
     {!sync && !error && <div className="import-status"><span>Aún no hay datos. Pulsa “Actualizar ranking” para realizar la primera sincronización.</span></div>}
     {error && <div className="import-error">{error}</div>}
-    {page === "dashboard" && <DashboardView analysis={analysis}/>} {page === "historical" && <HistoricalView analysis={analysis}/>} {page === "simulator" && <SimulatorView analysis={analysis}/>} {page === "analysis" && <AnalysisView analysis={analysis}/>} {page === "newScores" && <NewScoresView newScores={newScores} recentScores={recentScores} previousVersion={previousVersion}/>}
+    {page === "dashboard" && <DashboardView analysis={analysis}/>} {page === "historical" && <HistoricalView analysis={analysis}/>} {page === "simulator" && <SimulatorView analysis={analysis}/>} {page === "newScores" && <NewScoresView newScores={newScores} recentScores={recentScores} previousVersion={previousVersion}/>}
   </MainLayout></div>;
 }
